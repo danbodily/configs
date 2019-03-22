@@ -1,0 +1,15 @@
+#!/bin/sh
+echo "Updating Tags"
+
+#Library
+export TAGFILE="/home/a9gdkzz/my_tags/catkin_tags"
+export CTAG_DIR="/home/a9gdkzz/catkin_ws/src"
+if [ -f $TAGFILE ]; then
+    rm /home/a9gdkzz/my_tags/catkin_tags
+fi
+ctags -R --extra=+f --exclude=lib $CTAG_DIR  && echo "Catkin WS Source Updated"
+# ctags -Ra --extra=+f $BRANCH/build/debug/simulation/OFS/Messages*  && echo "Built OFS Messages Updated"
+# ctags -Ra --extra=+f $BRANCH/build/debug/generated*  && echo "Generated Files Included in Build"
+mv tags /home/a9gdkzz/my_tags/catkin_tags
+
+echo "Tags Successfully Updated"
