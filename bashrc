@@ -9,10 +9,11 @@
 
 
 # export SVN_EDITOR=vim
-alias base="cd /home/a9gdkzz/catkin_ws/"
+# export BASE=~/catkin_ws
 alias grep='grep --exclude-dir=build --color=auto'
 alias c="clear"
-alias cb="base && catkin build"
+alias cb="pushd . && base && catkin build && popd"
+alias cbd="pushd . && base && catkin build -DCMAKE_BUILD_TYPE=Debug && popd"
 alias ls="ls --color=tty"
 alias b="cd .."
 # alias matlab="/apps/matlab_r2015b/bin/matlab"
@@ -22,6 +23,13 @@ alias updatetags="cd && ./gentags.sh"
 alias sudo="dzdo"
 alias vimall="vim -p *"
 alias sb="source ~/.bashrc && echo 'bash sourced!'"
+alias st="pushd . && base && source devel/setup.bash && popd && echo 'Sourced /devel/setup.bash'"
+alias gitdiff="diff $1"
+
+#ROS Aliases
+alias rte="rostopic echo /"
+alias rtp="rostopic pub /"
+alias rtl="rostopic list"
 
 # alias sd="cd $WORKBASE"
 # alias vb="vim ~/.bashrc"
@@ -77,6 +85,28 @@ dtree() {
 #     cd $curr_dir
 #     ls
 # }
+diff(){
+    if [ "$#" -le 0  ]; then
+        git diff | vim -R -
+    else
+        git diff $1 | vim -R -
+    fi
+}
+
+sdiff(){
+    if [ "$#" -le 0  ]; then
+        git diff --staged | vim -R -
+    else
+        git diff --staged $1 | vim -R -
+    fi
+}
+
+base(){
+    while (test ${PWD##*/} != 'a9gdkzz'); do
+        cd ..
+    done
+    cd -
+}
 
 #Source Branch
 #May be helpful to source ROS
@@ -113,6 +143,7 @@ sedit(){
     fi
 }
 
+
 #Set thread limit
 # ulimit -u 2048
 # ulimit -n 4096
@@ -121,9 +152,18 @@ sedit(){
 # PYTHON OPTIONS
 
 source /opt/ros/melodic/setup.bash
-source /home/a9gdkzz/catkin_ws/devel/setup.bash
+# source /home/a9gdkzz/ws_moveit/devel/setup.bash
+# source /home/a9gdkzz/catkin_ws/devel/setup.bash
+source /home/a9gdkzz/ws/devel/setup.bash --extend
+# source /srv/ws_moveit/devel/setup.bash --extend
+# source ~/peel_ws/devel/setup.bash --extend
 
 #Shows Computer-Currenty Folder - Git Branch in prompt
-export PS1="\[\e[32m\]\h \[\e[m\]\[\e[34m\]\W\[\e[m\] \$(git branch 2>/dev/null | grep '^*' | colrm 1 2): "
 # export PS1="\[\e[32m\]\h \[\e[m\]\[\e[34m\]\W\[\e[m\] \$(git branch 2>/dev/null | grep '^*' | colrm 1 2): "
-
+export PS1="\[\e[32m\]\h  \$(git branch 2>/dev/null | grep '^*' | colrm 1 2) \[\e[m\]\[\e[34m\]\W\[\e[m\]: "
+# export PS1="\[\e[32m\]\h \[\e[m\]\[\e[34m\]\W\[\e[m\] \$(git branch 2>/dev/null | grep '^*' | colrm 1 2): "
+# alias bringup='roslaunch mvt_crplr_bringup candy_magician_peel_tabbed.launch sim:=false use_rsi:=true rsi_listener_ip:=192.168.2.102'
+# alias orchestrator='rosrun mvt_test_orchestrators orch_node'
+# alias generate='rosrun mvt_test_orchestrators generate_stochastic_experiment'
+# alias run_experiment='rosrun mvt_test_orchestrators run_experiment'
+# alias mount_crplr='dzdo mount -t cifs -o username=a9gdkzz,domain=usac,vers=1.0,uid=541788875,gid=100,nobrl //usfile01/crplr /home/a9gdkzz/crplr'
