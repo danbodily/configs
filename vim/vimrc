@@ -1,5 +1,5 @@
 " Keep Track of Ctags Libraries here
-set tags=/home/a9gdkzz/my_tags/catkin_tags
+set tags=/home/a9gdkzz/my_tags/tags
 "set tags+=
 " set tags+=/home/z1127464/Desktop/trunk/simulation/IFS/tags
 " set tags+=/scratch/FUEL/std-1.4.13.0/Linux-x86_64-gcc4.4/src/rms/genMath-0.7.0/include/tags
@@ -56,7 +56,7 @@ Plugin 'Lokaltog/vim-easymotion'
     " ./install.sh --clang-completer
     " http://susu.github.io/posts/clang-completion-in-vim-with-youcompleteme/
     " sudo apt-get install clang-format-3.6
-"Plugin 'Valloric/YouCompleteMe'
+Plugin 'Valloric/YouCompleteMe'
 "Bundle 'majutsushi/tagbar'
 
 " shows multiple files nicely
@@ -117,9 +117,9 @@ filetype plugin indent on
 "Allows delete to auto delete tabs, past eol breaks etc"
 "Inserts 4 spaces instead of Tab"
 set backspace=2 
-set shiftwidth=4
-set tabstop=4
-set softtabstop=4
+set shiftwidth=2
+set tabstop=2
+set softtabstop=2
 set smarttab
 set expandtab
 
@@ -149,8 +149,8 @@ nnoremap <F2> :set nonumber!<CR>
 set pastetoggle=<F2>
 
 " #Map arrows to original jump (CI CO)
-nnoremap <C-Left> <C-I>
-nnoremap <C-Right> <C-O>
+nnoremap <C-Left> <C-O>
+nnoremap <C-Right> <C-I>
 
 " tab movement mapped to (CI CO)
 nnoremap <C-I> :tabprev<CR>
@@ -214,8 +214,8 @@ nmap <Leader>k <Plug>(easymotion-k)
 " for some reason <C-n> doesn't work
 
 " for interaction with ipython, needs running ipython qtconsole and :IPython
-nnoremap <silent> <F4> :silent w <CR>:silent python run_this_file()<CR>
-inoremap <F4> <ESC>:w <CR>:python run_this_file()<CR>
+nnoremap <silent> <F4> :silent w <CR>:silent python3 run_this_file()<CR>
+inoremap <F4> <ESC>:w <CR>:python3 run_this_file()<CR>
 
 " search options
 set incsearch
@@ -241,7 +241,7 @@ let mapleader=","
 nmap <silent> <leader>ev :tabe $MYVIMRC<CR>
 
 " Source .vimrc file
-map <leader>sv :source $MYVIMRC<CR>
+" map <leader>sv :source $MYVIMRC<CR>
 
 " Open tag bar
 map <silent> <leader>l :TagbarToggle<CR>
@@ -279,19 +279,18 @@ autocmd CursorMovedI *  if pumvisible() == 0|silent! pclose|endif
 autocmd InsertLeave * if pumvisible() == 0|silent! pclose|endif
 
 " Execution
-nnoremap  df :exec 'w' <cr> :exec '! python %' <cr>
-nnoremap <buffer> ! :exec '! python %' <cr>
+nnoremap  df :exec 'w' <cr> :exec '! python3 %' <cr>
+nnoremap <buffer> ! :exec '! python3 %' <cr>
 nnoremap <buffer> @ :exec 'w' <cr>
 nnoremap <buffer> > <C-w>>
 nnoremap <buffer> < <C-w><
 
 " command R !./%
 map <leader>a oassert(False)<ESC>
-map <leader>z ostd::cout <<
-imap <leader>x <Space> << std::endl;<ESC>
+" map <leader>z ostd::cout <<
+" imap <leader>x <Space> << std::endl;<ESC>
 map <leader>w oraw_input("break")<ESC>
 map <leader>st oimport pdb<ESC>opdb.set_trace()<ESC>
-map <leader>sv :source ~/.vimrc <CR>
 command! -nargs=1 SS let @/ = '\V'.escape(<q-args>, '\')
 
 "color scheme
@@ -411,22 +410,61 @@ colorscheme monokai
 " vim:set et sw=2:
 
 "
+" Like windo but restore the current window.
+function! WinDo(command)
+  let currwin=winnr()
+  execute 'windo ' . a:command
+  execute currwin . 'wincmd w'
+endfunction
+com! -nargs=+ -complete=command Windo call WinDo(<q-args>)
+
+" Like tabdo but restore the current tab.
+function! TabDo(command)
+  let currTab=tabpagenr()
+  execute 'tabdo ' . a:command
+  execute 'tabn ' . currTab
+endfunction
+com! -nargs=+ -complete=command Tabdo call TabDo(<q-args>)
 
 " opens variable definition
-map <C-\> <CR>:exec("tag ".expand("<cword>"))<CR>
-map <leader>v :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-map <leader>t :tabe <CR>:exec("tag ".expand("<cword>"))<CR>
+map <C-\> <CR>:exec("tj ".expand("<cword>"))<CR>
+nmap <leader>v :vsp <CR>:exec("tj ".expand("<cword>"))<CR>
+"Hack to allow expansion over multiple words with period.  expands current
+"word with period allowed to be part of current word (for files mainly).
+map <leader>sv :vsp<CR>:set iskeyword+=.<CR>:let myword=expand('<cword>')<CR>:set iskeyword-=.<CR>:exec("tj ".expand(myword))<CR>
+map <leader>t :tabe <CR>:exec("tj ".expand("<cword>"))<CR>
 
 "opens header or cpp through ctags"
-map <leader>p :vsp \| exec("tag ".expand('%:t:r') . '.hpp')<CR>
-map <leader>h :vsp \| exec("tag ".expand('%:t:r') . '.h')<CR>
-map <leader>c :vsp \| exec("tag ".expand('%:t:r') . '.cpp')<CR>
+map <leader>p :vsp \| exec("tj ".expand('%:t:r') . '.hpp')<CR>
+map <leader>h :vsp \| exec("tj ".expand('%:t:r') . '.h')<CR>
+map <leader>c :vsp \| exec("tj ".expand('%:t:r') . '.cpp')<CR>
+
+map <leader><leader>m :vsp \| exec("tj ".expand('<cword>') . '.msg')<CR>
+map <leader><leader>h :vsp \| exec("tj ".expand('<cword>') . '.h')<CR>
+map <leader><leader>a :vsp \| exec("tj ".expand('<cword>') . '.action')<CR>
+map <leader><leader>p :vsp \| exec("tj ".expand('<cword>') . '.hpp')<CR>
+map <leader><leader>c :vsp \| exec("tj ".expand('<cword>') . '.cpp')<CR>
+map <leader><leader>sr :vsp \| exec("tj ".expand('<cword>') . '.srv')<CR>
+map <leader><leader>l :vsp \| exec("tj ".expand('<cword>') . '.launch')<CR>
+
+nnoremap <leader>s :call SetIsKeyWordWithPeriod()<cr>
+let g:periodiskeyword=0
+
+function! SetIsKeyWordWithPeriod()
+    if g:periodiskeyword == 0
+        set iskeyword+=.
+        let g:periodiskeyword=1
+        echo "Period IS keyword!"
+    else
+        set iskeyword-=.
+        let g:periodiskeyword=0
+        echo "Period IS NOT keyword!"
+    endif
+  endfunction
+
 
 "Moves vsp to new window
 map <leader>n <C-w>T <CR>
-
-"Moves vsp to new window
-command UpdateTags execute "! bash /home/z1127464/gentags.sh" | execute "set tags=/home/z1127464/my_tags/FUELtags" | execute "set tags+=/home/z1127464/my_tags/IFStags"
 
 "diffthis
 map <leader>dt :diffthis <CR>
@@ -440,8 +478,7 @@ map <leader>np :set nopaste <CR>
 map <leader>fi =a{ <CR>
 
 "Copy to clipboard (Only in gvim)
-noremap <leader>y "+y
-noremap <leader>yy "+yy
+map <leader>y "+y
 
 " Prevents pasting from yaking replaced content
 function! RestoreRegister()
