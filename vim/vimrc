@@ -1,5 +1,5 @@
 " Keep Track of Ctags Libraries here
-set tags=/home/a9gdkzz/my_tags/catkin_tags
+set tags=/home/a9gdkzz/my_tags/tags
 "set tags+=
 " set tags+=/home/z1127464/Desktop/trunk/simulation/IFS/tags
 " set tags+=/scratch/FUEL/std-1.4.13.0/Linux-x86_64-gcc4.4/src/rms/genMath-0.7.0/include/tags
