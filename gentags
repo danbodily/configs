@@ -1,15 +1,20 @@
 #!/bin/sh
 echo "Updating Tags"
 
+#Specify Target_DIR
+export TARGET_DIR="/home/a9gdkzz/ws/"
+
 #Library
-export TAGFILE="/home/a9gdkzz/my_tags/catkin_tags"
-export CTAG_DIR="/home/a9gdkzz/catkin_ws/src"
+export TAGFILE="/home/a9gdkzz/my_tags/tags"
+
+#Remove tag file if exists
 if [ -f $TAGFILE ]; then
-    rm /home/a9gdkzz/my_tags/catkin_tags
+    rm /home/a9gdkzz/my_tags/tags
 fi
-ctags -R --extra=+f --exclude=lib $CTAG_DIR  && echo "Catkin WS Source Updated"
-# ctags -Ra --extra=+f $BRANCH/build/debug/simulation/OFS/Messages*  && echo "Built OFS Messages Updated"
-# ctags -Ra --extra=+f $BRANCH/build/debug/generated*  && echo "Generated Files Included in Build"
-mv tags /home/a9gdkzz/my_tags/catkin_tags
+
+# ctags -R --extra=+f --exclude=lib $CTAG_DIR  && echo "Catkin WS Source Updated"
+ctags -R --extra=+f $TARGET_DIR  && echo "WS Tags Updated"
+ctags -Ra --extra=+f /opt/ros/melodic/ && echo "ROS Tags Added"
+mv tags /home/a9gdkzz/my_tags/tags
 
 echo "Tags Successfully Updated"
