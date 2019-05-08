@@ -1,0 +1,8 @@
+--langmap=c:+.yaml
+--langmap=c:+.launch
+--langmap=c:+.msg
+--langmap=c:+.action
+--langmap=c:+.srv
+--langmap=c:+.xacro
+--langmap=c:+.srdf
+--langmap=c:+.xml
